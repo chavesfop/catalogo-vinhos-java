@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,31 @@ public class VinhoController {
 		//Retorna um vinho caso encontre, e caso não encontre retorna um HTTP 404
         return repository.findById(id)
                 .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    
+    //HTTP PUT para /api/vinhos/{id}
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Vinho> atualizar(
+            @PathVariable Long id,
+            @RequestBody Vinho dadosAtualizados) {
+
+    	//Primeiro, verificamos se o vinho existe no banco.
+        return repository.findById(id)
+                .map(vinho -> {
+                	//Atualizamos os atributos do objeto com os dados recebidos no JSON.
+                    vinho.setNome(dadosAtualizados.getNome());
+                    vinho.setUva(dadosAtualizados.getUva());
+                    vinho.setPreco(dadosAtualizados.getPreco());
+                    
+                    //O Spring Data JPA utiliza o Hibernate para persistir as alterações no SQLite.
+                    Vinho vinhoAtualizado = repository.save(vinho);
+                	
+                    //Retorna o vinho com os valores atualizado
+                    return ResponseEntity.ok(vinhoAtualizado);
+                })
+                //caso não encontre o vinho retorna HTTP 404.
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
