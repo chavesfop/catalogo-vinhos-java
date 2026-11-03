@@ -628,8 +628,6 @@ O projeto foi desenvolvido para exercitar e demonstrar:
 4. **Qualidade de código:** separação em camadas e responsabilidades bem definidas.
 5. **Apresentação:** demonstração dos endpoints, persistência e execução dos testes.
 
-Outras entregas da disciplina, como atas de reuniões e relatórios de impeditivos, devem ser organizadas conforme as orientações do professor.
-
 ---
 
 **Repositório:** https://github.com/chavesfop/catalogo-vinhos-java
