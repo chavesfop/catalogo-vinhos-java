@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "vinhos")
@@ -21,6 +22,12 @@ public class Vinho {
     private String uva;
 
     private BigDecimal preco;
+    
+    @Column(name = "quantidade")
+    private Integer quantidade = 0;
+
+    @Column(name = "estoque_minimo")
+    private Integer estoqueMinimo = 0;
 
     public Vinho() {
     }
@@ -51,5 +58,21 @@ public class Vinho {
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
+    }
+    
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public Integer getEstoqueMinimo() {
+        return estoqueMinimo;
+    }
+
+    public void setEstoqueMinimo(Integer estoqueMinimo) {
+        this.estoqueMinimo = estoqueMinimo;
     }
 }

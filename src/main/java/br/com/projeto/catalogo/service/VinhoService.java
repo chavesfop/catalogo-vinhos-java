@@ -45,6 +45,24 @@ public class VinhoService {
                 "O preco nao pode ser negativo."
             );
         }
+        
+     // Valida a quantidade em estoque
+        if (vinho.getQuantidade() == null ||
+            vinho.getQuantidade() < 0) {
+
+            throw new IllegalArgumentException(
+                "A quantidade nao pode ser negativa."
+            );
+        }
+
+        // Valida o estoque minimo
+        if (vinho.getEstoqueMinimo() == null ||
+            vinho.getEstoqueMinimo() < 0) {
+
+            throw new IllegalArgumentException(
+                "O estoque minimo nao pode ser negativo."
+            );
+        }
 
         // Persiste o vinho no banco
         return repository.save(vinho);
@@ -87,4 +105,87 @@ public class VinhoService {
 
         return true;
     }
+    
+    public Optional<Vinho> registrarEntrada(Long id, Integer quantidade) {
+
+        if (quantidade == null || quantidade <= 0) {
+            throw new IllegalArgumentException(
+                "A quantidade de entrada deve ser maior que zero."
+            );
+        }
+
+        return repository.findById(id)
+                .map(vinho -> {
+
+                    Integer estoqueAtual = vinho.getQuantidade();
+
+                    if (estoqueAtual == null || estoqueAtual < 0) {
+                        throw new IllegalArgumentException(
+                            "O estoque atual do vinho e invalido."
+                        );
+                    }
+
+                    int novoEstoque;
+
+                    try {
+                        novoEstoque = Math.addExact(
+                            estoqueAtual, quantidade
+                        );
+                    } catch (ArithmeticException e) {
+                        throw new IllegalArgumentException(
+                            "A quantidade excede o limite permitido."
+                        );
+                    }
+
+                    vinho.setQuantidade(novoEstoque);
+
+                    return repository.save(vinho);
+                });
+    }
+    
+    public Optional<Vinho> registrarSaida(Long id, Integer quantidade) {
+
+        // Valida a quantidade informada
+        if (quantidade == null || quantidade <= 0) {
+            throw new IllegalArgumentException(
+                "A quantidade de saida deve ser maior que zero."
+            );
+        }
+
+        // Busca o vinho no banco
+        return repository.findById(id)
+                .map(vinho -> {
+
+                    Integer estoqueAtual = vinho.getQuantidade();
+
+                    // Verifica se o estoque possui um valor valido
+                    if (estoqueAtual == null || estoqueAtual < 0) {
+                        throw new IllegalArgumentException(
+                            "O estoque atual do vinho e invalido."
+                        );
+                    }
+
+                    // Verifica se existe estoque suficiente
+                    if (quantidade > estoqueAtual) {
+                        throw new IllegalArgumentException(
+                            "Estoque insuficiente. Disponivel: "
+                            + estoqueAtual
+                        );
+                    }
+
+                    // Calcula a quantidade restante
+                    int novoEstoque = estoqueAtual - quantidade;
+
+                    // Atualiza o estoque
+                    vinho.setQuantidade(novoEstoque);
+
+                    // Persiste a alteracao utilizando JPA
+                    return repository.save(vinho);
+                });
+    }
+    
+    public List<Vinho> listarEstoqueBaixo() {
+        return repository.buscarComEstoqueBaixo();
+    }
+    
 }

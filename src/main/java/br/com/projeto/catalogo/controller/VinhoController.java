@@ -112,4 +112,57 @@ public class VinhoController {
 
         return ResponseEntity.noContent().build();
     }
+    
+    @PostMapping("/{id}/entrada")
+    public ResponseEntity<?> registrarEntrada(
+            @PathVariable Long id,
+            @RequestBody Vinho dados) {
+
+        try {
+
+            Optional<Vinho> vinho =
+                service.registrarEntrada(id, dados.getQuantidade());
+
+            if (vinho.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok(vinho.get());
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("erro", e.getMessage()));
+        }
+    }
+    
+    @PostMapping("/{id}/saida")
+    public ResponseEntity<?> registrarSaida(
+            @PathVariable Long id,
+            @RequestBody Vinho dados) {
+
+        try {
+
+            Optional<Vinho> vinho =
+                service.registrarSaida(id, dados.getQuantidade());
+
+            if (vinho.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok(vinho.get());
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("erro", e.getMessage()));
+        }
+    }
+    
+    @GetMapping("/estoque-baixo")
+    public List<Vinho> listarEstoqueBaixo() {
+        return service.listarEstoqueBaixo();
+    }
 }
