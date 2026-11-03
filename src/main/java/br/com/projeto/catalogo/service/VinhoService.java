@@ -2,6 +2,7 @@ package br.com.projeto.catalogo.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -187,5 +188,28 @@ public class VinhoService {
     public List<Vinho> listarEstoqueBaixo() {
         return repository.buscarComEstoqueBaixo();
     }
+    
+    public List<Map<String, Object>> sugerirReposicao() {
+
+        return repository.buscarComEstoqueBaixo()
+                .stream()
+                .map(vinho -> {
+
+                    int quantidadeSugerida =
+                        vinho.getEstoqueMinimo() - vinho.getQuantidade();
+
+                    return Map.<String, Object>of(
+                        "id", vinho.getId(),
+                        "nome", vinho.getNome(),
+                        "quantidadeAtual", vinho.getQuantidade(),
+                        "estoqueMinimo", vinho.getEstoqueMinimo(),
+                        "quantidadeSugerida", quantidadeSugerida
+                    );
+
+                })
+                .toList();
+    }
+    
+    
     
 }

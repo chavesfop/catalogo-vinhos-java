@@ -165,4 +165,9 @@ public class VinhoController {
     public List<Vinho> listarEstoqueBaixo() {
         return service.listarEstoqueBaixo();
     }
+    
+    @GetMapping("/sugestoes-reposicao")
+    public List<Map<String, Object>> sugerirReposicao() {
+        return service.sugerirReposicao();
+    }
 }
