@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -31,6 +33,12 @@ public class VinhoController {
     }
     
     //HTTP POST para /api/vinhos
+    /* {
+	    "nome": "Nome do Vinho",
+	    "uva": "Uva do Vinho",
+	    "preco": 99.90
+	  }
+	*/
     //@RequestBody Converte automaticamente o JSON recebido em um objeto Java da classe Vinho.
     @PostMapping
     public ResponseEntity<Vinho> cadastrar(@RequestBody Vinho vinho) {
@@ -42,5 +50,15 @@ public class VinhoController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(vinhoSalvo);
+    }
+    
+    //HTTP GET para /api/vinhos/{id}
+    // @PathVariable captura o valor 1 da URL e disponibiliza esse valor na variavel id
+    @GetMapping("/{id}")
+    public ResponseEntity<Vinho> buscarPorId(@PathVariable Long id) {
+		//Retorna um vinho caso encontre, e caso não encontre retorna um HTTP 404
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
